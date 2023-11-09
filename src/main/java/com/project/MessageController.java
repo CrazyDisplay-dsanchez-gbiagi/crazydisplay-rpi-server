@@ -4,8 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
-import java.util.LinkedList;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -14,7 +13,7 @@ import org.java_websocket.server.WebSocketServer;
 public class MessageController extends WebSocketServer {
 
     static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-    private LinkedList<String> _last5Messages = new LinkedList<>();
+    AppData appData = new AppData();
 
     public MessageController(int port) {
         super(new InetSocketAddress(port));
@@ -23,57 +22,49 @@ public class MessageController extends WebSocketServer {
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         String clientId = getConnectionId(conn);
+        appData.addClient(clientId, "ª");
         System.out.println("A connection with client " + clientId + " has created!");
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onClose'");
+        String clientId = getConnectionId(conn);
+        int index = 0;
+
+        for (int i = 0; i < appData.getClientConnections().size(); i++) {
+            if (clientId.equals(appData.getClientConnections().get(i).get(0))) {
+                index = i;
+                break;
+            }
+        }
+
+        appData.getClientConnections().remove(index);
+
+        conn.close();
     }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
         System.out.println("Message received > " + message);
-        System.out.println("Iniciant comanda...");
+        if (message.equals("list")) {
+            message = "";
+            for (ArrayList<String> client : appData.getClientConnections()) {
+                message += "- Client " + client.get(0) + " from " + client.get(1) + " -";
+            }
+        }
+        String cd[] = { "cd" };
+        Main.runComand(cd);
 
         String cmd[] = { "./dev/rpi-rgb-led-matrix/utils/text-scroller", "-f",
                 "~/dev/bitmap-fonts/bitmap/cherry/cherry-10-b.bdf", "--led-cols=64", "--led-rows=64",
                 "--led-slowdown-gpio=4", "--led-no-hardware-pulse", "'" + message + "'" };
-
-        /*
-         * ./dev/rpi-rgb-led-matrix/utils/text-scroller -f
-         * ~/dev/bitmap-fonts/bitmap/cherry/cherry-10-b.bdf --led-cols=64 --led-rows=64
-         * --led-slowdown-gpio=4 --led-no-hardware-pulse "message"
-         */
-
-        try {
-            // objecte global Runtime
-            Runtime rt = java.lang.Runtime.getRuntime();
-
-            // executar comanda en subprocess
-            Process p = rt.exec(cmd);
-            // donem un temps d'execució
-            TimeUnit.SECONDS.sleep(5);
-            // el matem si encara no ha acabat
-            if (p.isAlive())
-                p.destroy();
-            p.waitFor();
-            // comprovem el resultat de l'execució
-            System.out.println("Comanda 1 exit code=" + p.exitValue());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // finish
-        System.out.println("Comandes finalitzades.");
+        Main.runComand(cmd);
     }
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onError'");
+        // Quan hi ha un error
+        System.out.println("Error: " + ex.getMessage());
     }
 
     @Override
