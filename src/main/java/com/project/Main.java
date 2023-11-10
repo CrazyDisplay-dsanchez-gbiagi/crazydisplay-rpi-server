@@ -15,8 +15,10 @@ public class Main {
         String localIp = getLocalIPAddress();
         System.out.println("Local server IP: " + localIp);
 
-        String cmd[] = { "./dev/rpi-rgb-led-matrix/utils/text-scroller", "-f",
-                "~/dev/bitmap-fonts/bitmap/cherry/cherry-10-b.bdf", "--led-cols=64", "--led-rows=64",
+        String cmd[] = { "/bin/bash", "-c", "./dev/rpi-rgb-led-matrix/utils/text-scroller", "-f",
+                "dev/bitmap-fonts/bitmap/cherry/cherry-10-b.bdf",
+                "--led-cols=64",
+                "--led-rows=64",
                 "--led-slowdown-gpio=4", "--led-no-hardware-pulse", "'" + localIp + "'" };
         runComand(cmd);
 

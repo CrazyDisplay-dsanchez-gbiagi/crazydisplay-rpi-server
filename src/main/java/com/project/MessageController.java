@@ -87,6 +87,8 @@ public class MessageController extends WebSocketServer {
                 if (line.equals("exit")) {
                     running = false;
                 }
+                String[] lista = line.split(" ");
+                Main.runComand(lista);
             }
             System.out.println("Stopping server");
             stop(1000);
