@@ -54,8 +54,8 @@ public class MessageController extends WebSocketServer {
             }
         }
 
-        String cmd[] = { "./dev/rpi-rgb-led-matrix/utils/text-scroller", "-f",
-                "~/dev/bitmap-fonts/bitmap/cherry/cherry-10-b.bdf", "--led-cols=64", "--led-rows=64",
+        String cmd[] = { "home/ieti/dev/rpi-rgb-led-matrix/utils/text-scroller", "-f",
+                "/home/ieti/dev/bitmap-fonts/bitmap/cherry/cherry-10-b.bdf", "--led-cols=64", "--led-rows=64",
                 "--led-slowdown-gpio=4", "--led-no-hardware-pulse", "'" + message + "'" };
         Main.runComand(cmd, appData);
     }
