@@ -52,8 +52,6 @@ public class MessageController extends WebSocketServer {
                 message += "- Client " + client.get(0) + " from " + client.get(1) + " -";
             }
         }
-        String cd[] = { "cd", "/home/ieti" };
-        Main.runComand(cd);
 
         String cmd[] = { "./dev/rpi-rgb-led-matrix/utils/text-scroller", "-f",
                 "~/dev/bitmap-fonts/bitmap/cherry/cherry-10-b.bdf", "--led-cols=64", "--led-rows=64",
