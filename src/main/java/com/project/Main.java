@@ -15,7 +15,7 @@ public class Main {
         String localIp = getLocalIPAddress();
         System.out.println("Local server IP: " + localIp);
 
-        String cd[] = { "cd" };
+        String cd[] = { "cd", "/home/ieti" };
         runComand(cd);
 
         String cmd[] = { "./dev/rpi-rgb-led-matrix/utils/text-scroller", "-f",

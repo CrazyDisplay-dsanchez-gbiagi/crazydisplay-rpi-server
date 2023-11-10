@@ -52,7 +52,7 @@ public class MessageController extends WebSocketServer {
                 message += "- Client " + client.get(0) + " from " + client.get(1) + " -";
             }
         }
-        String cd[] = { "cd" };
+        String cd[] = { "cd", "/home/ieti" };
         Main.runComand(cd);
 
         String cmd[] = { "./dev/rpi-rgb-led-matrix/utils/text-scroller", "-f",
