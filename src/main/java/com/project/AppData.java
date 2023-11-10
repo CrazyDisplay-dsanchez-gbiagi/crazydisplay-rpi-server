@@ -6,9 +6,11 @@ import java.util.ArrayList;
 public class AppData {
 
     private ArrayList<ArrayList<String>> clientConnections;
+    Process process;
 
     public AppData() {
         clientConnections = new ArrayList<>();
+        process = null;
     }
 
     public void addClient(String id, String platform) {
@@ -16,6 +18,14 @@ public class AppData {
         comb.add(id);
         comb.add(platform);
         clientConnections.add(comb);
+    }
+
+    public void setProcess(Process p) {
+        process = p;
+    }
+
+    public Process getProcess() {
+        return process;
     }
 
     public ArrayList<ArrayList<String>> getClientConnections() {

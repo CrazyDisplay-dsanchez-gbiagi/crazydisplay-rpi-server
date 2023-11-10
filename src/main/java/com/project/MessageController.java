@@ -13,10 +13,11 @@ import org.java_websocket.server.WebSocketServer;
 public class MessageController extends WebSocketServer {
 
     static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-    AppData appData = new AppData();
+    AppData appData;
 
-    public MessageController(int port) {
+    public MessageController(int port, AppData appData) {
         super(new InetSocketAddress(port));
+        this.appData = appData;
     }
 
     @Override
@@ -56,7 +57,7 @@ public class MessageController extends WebSocketServer {
         String cmd[] = { "./dev/rpi-rgb-led-matrix/utils/text-scroller", "-f",
                 "~/dev/bitmap-fonts/bitmap/cherry/cherry-10-b.bdf", "--led-cols=64", "--led-rows=64",
                 "--led-slowdown-gpio=4", "--led-no-hardware-pulse", "'" + message + "'" };
-        Main.runComand(cmd);
+        Main.runComand(cmd, appData);
     }
 
     @Override
@@ -88,7 +89,7 @@ public class MessageController extends WebSocketServer {
                     running = false;
                 }
                 String[] lista = line.split(" ");
-                Main.runComand(lista);
+                Main.runComand(lista, appData);
             }
             System.out.println("Stopping server");
             stop(1000);

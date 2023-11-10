@@ -14,18 +14,20 @@ public class Main {
         int port = 8888;
         String localIp = getLocalIPAddress();
         System.out.println("Local server IP: " + localIp);
+        AppData appData = new AppData();
 
         String cmd[] = { "/home/ieti/dev/rpi-rgb-led-matrix/utils/text-scroller", "-f",
                 "/home/ieti/dev/bitmap-fonts/bitmap/cherry/cherry-10-b.bdf",
                 "--led-cols=64",
                 "--led-rows=64",
                 "--led-slowdown-gpio=4", "--led-no-hardware-pulse", "'" + localIp + "'" };
-        runComand(cmd);
+
+        runComand(cmd, appData);
 
         // Deshabilitar SSLv3 per clients Android
         java.lang.System.setProperty("jdk.tls.client.protocols", "TLSv1,TLSv1.1,TLSv1.2");
 
-        MessageController server = new MessageController(port);
+        MessageController server = new MessageController(port, appData);
         server.runServerBucle();
     }
 
@@ -52,24 +54,24 @@ public class Main {
         return localIp;
     }
 
-    public static void runComand(String[] cmd) {
+    public static void killComand(Process p) {
+        // el matem si encara no ha acabat
+        if (p.isAlive())
+            p.destroy();
+    }
+
+    public static void runComand(String[] cmd, AppData appData) {
         System.out.println("Iniciant comanda...");
+        if (appData.getProcess() != null)
+            killComand(appData.getProcess());
         try {
             // objecte global Runtime
             Runtime rt = java.lang.Runtime.getRuntime();
 
             // executar comanda en subprocess
             Process p = rt.exec(cmd);
-            // donem un temps d'execució
-            TimeUnit.SECONDS.sleep(1);
-            // el matem si encara no ha acabat
-            if (p.isAlive())
-                p.destroy();
-            System.out.println("1...");
-            p.waitFor();
-            System.out.println("2...");
-            // comprovem el resultat de l'execució
-            System.out.println("Comanda 1 exit code=" + p.exitValue());
+
+            appData.setProcess(p);
 
         } catch (Exception e) {
             e.printStackTrace();
