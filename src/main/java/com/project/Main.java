@@ -10,6 +10,18 @@ import java.util.Enumeration;
 public class Main {
     public static void main(String[] args) throws InterruptedException, IOException {
 
+        String[] cmd = { "killall", "text-scroller" };
+        try {
+            // objecte global Runtime
+            Runtime rt = java.lang.Runtime.getRuntime();
+
+            // executar comanda en subprocess
+            rt.exec(cmd);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         int port = 8888;
         String localIp = getLocalIPAddress();
         System.out.println("Local server IP: " + localIp);
