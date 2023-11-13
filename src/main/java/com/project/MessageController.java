@@ -23,9 +23,8 @@ public class MessageController extends WebSocketServer {
     @Override
     public void onStart() {
         // Quan el servidor s'inicia
-        String host = getAddress().getAddress().getHostAddress();
         int port = getAddress().getPort();
-        System.out.println("WebSockets server running at: ws://" + host + ":" + port);
+        System.out.println("WebSockets server running at: ws://" + appData.getServerIp() + ":" + port);
         System.out.println("Type 'exit' to stop and exit server.");
         setConnectionLostTimeout(0);
         setConnectionLostTimeout(100);
@@ -50,18 +49,16 @@ public class MessageController extends WebSocketServer {
         }
 
         // Si el cliente esta mandando su plataforma
-        if (message.substring(0).equals("0")) {
-
+        if (message.substring(0, 1).equals("~")) {
             for (ArrayList<String> clientString : appData.getClientConnections()) {
                 if (clientString.get(0).equals(clientId)) {
-                    clientString.set(1, message.substring(1, message.length() - 1));
+                    clientString.set(1, message.substring(1, message.length()));
                 }
             }
 
             message = appData.getClientConnectionsString();
-            message.substring(0, message.length() - 1);
         }
-
+        System.out.println(message);
         Main.runComand(message, appData);
     }
 
@@ -69,7 +66,6 @@ public class MessageController extends WebSocketServer {
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         String clientId = getConnectionId(conn);
         int index = 0;
-
         for (int i = 0; i < appData.getClientConnections().size(); i++) {
             if (clientId.equals(appData.getClientConnections().get(i).get(0))) {
                 index = i;
@@ -78,6 +74,12 @@ public class MessageController extends WebSocketServer {
         }
 
         appData.getClientConnections().remove(index);
+
+        if (appData.getClientConnections().size() == 0) {
+            Main.runComand(appData.getServerIp(), appData);
+        } else {
+            Main.runComand(appData.getClientConnectionsString(), appData);
+        }
 
         conn.close();
     }
@@ -98,6 +100,7 @@ public class MessageController extends WebSocketServer {
                 line = in.readLine();
                 if (line.equals("exit")) {
                     running = false;
+                    Main.killComand(null);
                 }
                 // String[] lista = line.split(" ");
                 // Main.runComand(lista, appData);

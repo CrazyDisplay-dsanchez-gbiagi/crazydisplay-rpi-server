@@ -13,7 +13,7 @@ public class Main {
         int port = 8888;
         String localIp = getLocalIPAddress();
         System.out.println("Local server IP: " + localIp);
-        AppData appData = new AppData();
+        AppData appData = new AppData(localIp);
 
         runComand(localIp, appData);
 
@@ -58,7 +58,7 @@ public class Main {
                 "/home/ieti/dev/bitmap-fonts/bitmap/cherry/cherry-10-b.bdf",
                 "--led-cols=64",
                 "--led-rows=64",
-                "--led-slowdown-gpio=4", "--led-no-hardware-pulse", "'" + message + "'" };
+                "--led-slowdown-gpio=4", "--led-no-hardware-pulse", message };
 
         System.out.println("Iniciant comanda...");
         if (appData.getProcess() != null)

@@ -6,11 +6,13 @@ import java.util.ArrayList;
 public class AppData {
 
     private ArrayList<ArrayList<String>> clientConnections;
-    Process process;
+    private Process process;
+    private String serverIp;
 
-    public AppData() {
+    public AppData(String serverIp) {
         clientConnections = new ArrayList<>();
         process = null;
+        this.serverIp = serverIp;
     }
 
     public void addClient(String id, String platform) {
@@ -26,6 +28,10 @@ public class AppData {
 
     public Process getProcess() {
         return process;
+    }
+
+    public String getServerIp() {
+        return serverIp;
     }
 
     public ArrayList<ArrayList<String>> getClientConnections() {
