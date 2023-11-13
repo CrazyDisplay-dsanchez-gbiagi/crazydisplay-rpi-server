@@ -45,7 +45,6 @@ public class MessageController extends WebSocketServer {
         // Si el cliente esta pidiendo la lista de clientes
         if (message.equals("list")) {
             message = appData.getClientConnectionsString();
-            message.substring(0, message.length() - 1);
         }
 
         // Si el cliente esta mandando su plataforma
@@ -100,7 +99,7 @@ public class MessageController extends WebSocketServer {
                 line = in.readLine();
                 if (line.equals("exit")) {
                     running = false;
-                    Main.killComand(null);
+                    Main.killComand(appData.getProcess());
                 }
                 // String[] lista = line.split(" ");
                 // Main.runComand(lista, appData);

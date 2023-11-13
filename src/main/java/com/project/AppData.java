@@ -42,7 +42,7 @@ public class AppData {
         String list = "";
 
         for (ArrayList<String> client : clientConnections) {
-            list += "- Client " + client.get(0) + " from " + client.get(1) + " -";
+            list += " Client: " + client.get(0) + " from " + client.get(1) + " ";
         }
 
         return list;
