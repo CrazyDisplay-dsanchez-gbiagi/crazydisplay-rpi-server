@@ -32,4 +32,14 @@ public class AppData {
         return clientConnections;
     }
 
+    public String getClientConnectionsString() {
+        String list = "";
+
+        for (ArrayList<String> client : clientConnections) {
+            list += "- Client " + client.get(0) + " from " + client.get(1) + " -";
+        }
+
+        return list;
+    }
+
 }

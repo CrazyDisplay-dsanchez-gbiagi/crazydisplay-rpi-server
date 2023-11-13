@@ -21,10 +21,48 @@ public class MessageController extends WebSocketServer {
     }
 
     @Override
+    public void onStart() {
+        // Quan el servidor s'inicia
+        String host = getAddress().getAddress().getHostAddress();
+        int port = getAddress().getPort();
+        System.out.println("WebSockets server running at: ws://" + host + ":" + port);
+        System.out.println("Type 'exit' to stop and exit server.");
+        setConnectionLostTimeout(0);
+        setConnectionLostTimeout(100);
+    }
+
+    @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         String clientId = getConnectionId(conn);
         appData.addClient(clientId, "ª");
         System.out.println("A connection with client " + clientId + " has created!");
+    }
+
+    @Override
+    public void onMessage(WebSocket conn, String message) {
+        String clientId = getConnectionId(conn);
+        System.out.println("Message received > " + message);
+
+        // Si el cliente esta pidiendo la lista de clientes
+        if (message.equals("list")) {
+            message = appData.getClientConnectionsString();
+            message.substring(0, message.length() - 1);
+        }
+
+        // Si el cliente esta mandando su plataforma
+        if (message.substring(0).equals("0")) {
+
+            for (ArrayList<String> clientString : appData.getClientConnections()) {
+                if (clientString.get(0).equals(clientId)) {
+                    clientString.set(1, message.substring(1, message.length() - 1));
+                }
+            }
+
+            message = appData.getClientConnectionsString();
+            message.substring(0, message.length() - 1);
+        }
+
+        Main.runComand(message, appData);
     }
 
     @Override
@@ -45,36 +83,9 @@ public class MessageController extends WebSocketServer {
     }
 
     @Override
-    public void onMessage(WebSocket conn, String message) {
-        System.out.println("Message received > " + message);
-        if (message.equals("list")) {
-            message = "";
-            for (ArrayList<String> client : appData.getClientConnections()) {
-                message += "- Client " + client.get(0) + " from " + client.get(1) + " -";
-            }
-        }
-
-        String cmd[] = { "/home/ieti/dev/rpi-rgb-led-matrix/utils/text-scroller", "-f",
-                "/home/ieti/dev/bitmap-fonts/bitmap/cherry/cherry-10-b.bdf", "--led-cols=64", "--led-rows=64",
-                "--led-slowdown-gpio=4", "--led-no-hardware-pulse", "'" + message + "'" };
-        Main.runComand(cmd, appData);
-    }
-
-    @Override
     public void onError(WebSocket conn, Exception ex) {
         // Quan hi ha un error
         System.out.println("Error: " + ex.getMessage());
-    }
-
-    @Override
-    public void onStart() {
-        // Quan el servidor s'inicia
-        String host = getAddress().getAddress().getHostAddress();
-        int port = getAddress().getPort();
-        System.out.println("WebSockets server running at: ws://" + host + ":" + port);
-        System.out.println("Type 'exit' to stop and exit server.");
-        setConnectionLostTimeout(0);
-        setConnectionLostTimeout(100);
     }
 
     public void runServerBucle() {
@@ -88,8 +99,8 @@ public class MessageController extends WebSocketServer {
                 if (line.equals("exit")) {
                     running = false;
                 }
-                String[] lista = line.split(" ");
-                Main.runComand(lista, appData);
+                // String[] lista = line.split(" ");
+                // Main.runComand(lista, appData);
             }
             System.out.println("Stopping server");
             stop(1000);

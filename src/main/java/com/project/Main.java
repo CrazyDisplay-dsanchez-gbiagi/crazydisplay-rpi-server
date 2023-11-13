@@ -6,7 +6,6 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
-import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException, IOException {
@@ -16,13 +15,7 @@ public class Main {
         System.out.println("Local server IP: " + localIp);
         AppData appData = new AppData();
 
-        String cmd[] = { "/home/ieti/dev/rpi-rgb-led-matrix/utils/text-scroller", "-f",
-                "/home/ieti/dev/bitmap-fonts/bitmap/cherry/cherry-10-b.bdf",
-                "--led-cols=64",
-                "--led-rows=64",
-                "--led-slowdown-gpio=4", "--led-no-hardware-pulse", "'" + localIp + "'" };
-
-        runComand(cmd, appData);
+        runComand(localIp, appData);
 
         // Deshabilitar SSLv3 per clients Android
         java.lang.System.setProperty("jdk.tls.client.protocols", "TLSv1,TLSv1.1,TLSv1.2");
@@ -60,7 +53,13 @@ public class Main {
             p.destroy();
     }
 
-    public static void runComand(String[] cmd, AppData appData) {
+    public static void runComand(String message, AppData appData) {
+        String cmd[] = { "/home/ieti/dev/rpi-rgb-led-matrix/utils/text-scroller", "-f",
+                "/home/ieti/dev/bitmap-fonts/bitmap/cherry/cherry-10-b.bdf",
+                "--led-cols=64",
+                "--led-rows=64",
+                "--led-slowdown-gpio=4", "--led-no-hardware-pulse", "'" + message + "'" };
+
         System.out.println("Iniciant comanda...");
         if (appData.getProcess() != null)
             killComand(appData.getProcess());
