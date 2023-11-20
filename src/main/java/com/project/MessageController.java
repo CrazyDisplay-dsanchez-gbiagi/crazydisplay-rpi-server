@@ -98,17 +98,17 @@ public class MessageController extends WebSocketServer {
                 for (User user : users) {
                     if (user.getUser().equals(objRequest.getString("user")) && user.getPassword().equals(objRequest.getString("password"))) {
                         userValid = true;
-                        return;
                     }
                 }
                 if (userValid) {
                     objResponse.put("type", "login");
                     objResponse.put("valid", true);
+                    conn.send(objResponse.toString());
                 } else {
                     objResponse.put("type", "login");
                     objResponse.put("valid", false);
+                    conn.send(objResponse.toString());
                 }
-                conn.send(objResponse.toString());
             }
             else if (type.equalsIgnoreCase("platform")) {
                 appData.addClient(clientId, objRequest.getString("name"));
