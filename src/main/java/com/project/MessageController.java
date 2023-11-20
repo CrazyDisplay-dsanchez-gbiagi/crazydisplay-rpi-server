@@ -9,8 +9,16 @@ import java.util.ArrayList;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.json.JSONObject;
 
 public class MessageController extends WebSocketServer {
+
+    ArrayList<User> users = new ArrayList<>(){{{
+        add(new User("admin", "admin"));
+        add(new User("super", "super"));
+        add(new User("david", "david"));
+    }}};
+    
 
     static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     AppData appData;
@@ -33,32 +41,84 @@ public class MessageController extends WebSocketServer {
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         String clientId = getConnectionId(conn);
-        appData.addClient(clientId, "ª");
-        System.out.println("A connection with client " + clientId + " has created!");
+        //appData.addClient(clientId, "ª");
+        System.out.println("A connection with client " + clientId + " has been created!");
+        JSONObject objWlc = new JSONObject("{}");
+        objWlc.put("type", "message");
+        objWlc.put("from", "server");
+        objWlc.put("value", "Welcome to the display server");
+        conn.send(objWlc.toString()); 
     }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
+    //     String clientId = getConnectionId(conn);
+    //     System.out.println("Message received > " + message);
+
+    //     // Si el cliente esta pidiendo la lista de clientes
+    //     if (message.equals("list")) {
+    //         message = appData.getClientConnectionsString();
+    //     }
+
+    //     // Si el cliente esta mandando su plataforma
+    //     if (message.substring(0, 1).equals("~")) {
+    //         for (ArrayList<String> clientString : appData.getClientConnections()) {
+    //             if (clientString.get(0).equals(clientId)) {
+    //                 clientString.set(1, message.substring(1, message.length()));
+    //             }
+    //         }
+
+    //         message = appData.getClientConnectionsString();
+    //     }
+    //     System.out.println(message);
+    //     Main.runComand(message, appData);
+    // }
         String clientId = getConnectionId(conn);
-        System.out.println("Message received > " + message);
+        String promptPantalla;
+        try {
+            JSONObject objRequest = new JSONObject(message);
+            String type = objRequest.getString("type");
 
-        // Si el cliente esta pidiendo la lista de clientes
-        if (message.equals("list")) {
-            message = appData.getClientConnectionsString();
-        }
-
-        // Si el cliente esta mandando su plataforma
-        if (message.substring(0, 1).equals("~")) {
-            for (ArrayList<String> clientString : appData.getClientConnections()) {
-                if (clientString.get(0).equals(clientId)) {
-                    clientString.set(1, message.substring(1, message.length()));
+            // Si el cliente manda un mensaje
+            if (type.equalsIgnoreCase("message")) {
+                if (objRequest.getString("value").equals("list")) {
+                    promptPantalla = appData.getClientConnectionsString();
                 }
+                else {
+                    promptPantalla = objRequest.getString("value");
+                }
+                Main.runComand(promptPantalla, appData);
+                // Imprimir mensaje en pantalla
+                System.out.println("Client '" + clientId + "'': " + objRequest.getString("value"));
             }
-
-            message = appData.getClientConnectionsString();
+            // Si el cliente manda el login
+            else if (type.equalsIgnoreCase("login")) {
+                JSONObject objResponse = new JSONObject("{}");
+                boolean userValid = false;
+                for (User user : users) {
+                    if (user.getUser().equals(objRequest.getString("user")) && user.getPassword().equals(objRequest.getString("password"))) {
+                        userValid = true;
+                        return;
+                    }
+                }
+                if (userValid) {
+                    objResponse.put("type", "login");
+                    objResponse.put("valid", true);
+                } else {
+                    objResponse.put("type", "login");
+                    objResponse.put("valid", false);
+                }
+                conn.send(objResponse.toString());
+            }
+            else if (type.equalsIgnoreCase("platform")) {
+                appData.addClient(clientId, objRequest.getString("name"));
+                promptPantalla = appData.getClientConnectionsString();
+                Main.runComand(promptPantalla, appData);
+                System.out.println("Client " + clientId + " from: " + objRequest.getString("name"));
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
         }
-        System.out.println(message);
-        Main.runComand(message, appData);
     }
 
     @Override
