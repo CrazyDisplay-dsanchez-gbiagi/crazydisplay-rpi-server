@@ -5,6 +5,10 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.Enumeration;
 
 public class Main {
@@ -63,6 +67,57 @@ public class Main {
         // el matem si encara no ha acabat
         if (p.isAlive())
             p.destroy();
+    }
+
+    /*
+     * /home/ieti/dev/rpi-rgb-led-matrix/utils/led-image-viewer -C --led-cols=64
+     * --led-rows=64 --led-slowdown-gpio=2 --led-no-hardware-pulse
+     * ~/como-buscar-en-google-por-imagenes.jpg
+     */
+
+    public static void saveImage(String image, String ext) {
+        try {
+            String base64Image = image;
+
+            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+
+            String outputPath = "/home/ieti/project/crazydisplay-rpi-server/src/main/resources/assets/imagen." + ext;
+
+            Path outputFilePath = Paths.get(outputPath);
+            Files.write(outputFilePath, imageBytes);
+
+            System.out.println("Imagen guardada exitosamente en: " + outputPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void showImage(String ext, AppData appData) {
+        String[] cmd = { "/home/ieti/dev/rpi-rgb-led-matrix/utils/led-image-viewer", "-C",
+                "--led-cols=64",
+                "--led-rows=64",
+                "--led-slowdown-gpio=4",
+                "--led-no-hardware-pulse",
+                "/home/ieti/project/crazydisplay-rpi-server/src/main/resources/assets/image." + ext
+        };
+        System.out.println("Iniciant comanda...");
+        if (appData.getProcess() != null)
+            killComand(appData.getProcess());
+        try {
+            // objecte global Runtime
+            Runtime rt = java.lang.Runtime.getRuntime();
+
+            // executar comanda en subprocess
+            Process p = rt.exec(cmd);
+
+            appData.setProcess(p);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // finish
+        System.out.println("Comandes finalitzades.");
     }
 
     public static void runComand(String message, AppData appData) {
