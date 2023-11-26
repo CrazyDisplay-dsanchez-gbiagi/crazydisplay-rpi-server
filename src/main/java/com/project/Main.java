@@ -81,7 +81,8 @@ public class Main {
 
             byte[] imageBytes = Base64.getDecoder().decode(base64Image);
 
-            String outputPath = "/home/ieti/project/crazydisplay-rpi-server/src/main/resources/assets/imagen." + ext;
+            String outputPath = "Z:/1-Practicas clase/DAM_2/CrazyDisplay/crazydisplay-rpi-server/src/assets/imagen."
+                    + ext;
 
             Path outputFilePath = Paths.get(outputPath);
             Files.write(outputFilePath, imageBytes);
@@ -89,6 +90,7 @@ public class Main {
             System.out.println("Imagen guardada exitosamente en: " + outputPath);
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("error al guardar");
         }
     }
 

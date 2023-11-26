@@ -85,12 +85,12 @@ public class MessageController extends WebSocketServer {
                         promptPantalla = objRequest.getString("value");
                     }
                     Main.runComand(promptPantalla, appData);
-                } else {
+                } else if (objRequest.getString("format").equals("img")) {
                     System.out.println("Imagen");
-                    Thread.sleep(3000);
                     Main.runComand("Cargando imagen....", appData);
+                    Thread.sleep(3000);
                     Main.saveImage(objRequest.getString("value"), objRequest.getString("ext"));
-                    Main.showImage(objRequest.getString("ext"), appData);
+                    // Main.showImage(objRequest.getString("ext"), appData);
                 }
                 // Imprimir mensaje en pantalla
                 System.out.println("Client '" + clientId + "'': " + objRequest.getString("format"));
