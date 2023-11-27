@@ -81,7 +81,7 @@ public class Main {
 
             byte[] imageBytes = Base64.getDecoder().decode(base64Image);
 
-            String outputPath = "Z:/1-Practicas clase/DAM_2/CrazyDisplay/crazydisplay-rpi-server/src/assets/imagen."
+            String outputPath = "/home/ieti/project/crazydisplay-rpi-server/src/assets/image."
                     + ext;
 
             Path outputFilePath = Paths.get(outputPath);
