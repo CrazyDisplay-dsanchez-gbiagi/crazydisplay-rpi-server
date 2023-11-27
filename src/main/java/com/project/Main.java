@@ -100,7 +100,7 @@ public class Main {
                 "--led-rows=64",
                 "--led-slowdown-gpio=4",
                 "--led-no-hardware-pulse",
-                "/home/ieti/project/crazydisplay-rpi-server/src/main/resources/assets/image." + ext
+                "//home/ieti/project/crazydisplay-rpi-server/src/assets/image." + ext
         };
         System.out.println("Iniciant comanda...");
         if (appData.getProcess() != null)
